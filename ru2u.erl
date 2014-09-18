@@ -9,16 +9,16 @@ n2u(Name) -> % Username to UUID
 	application:start(asn1),
 	application:start(public_key),
 	application:start(ssl),
-	[{_, {_, [_, _, _, _, _, _, _], RES}}] = [httpc:request(post, {"https://api.mojang.com/profiles/page/1", [], "application/json", "{\"name\":\""++Name++"\",\"agent\":\"minecraft\"}"}, [{ssl, [{verify, 0}]}], [])],
-	string:substr(RES, 21, 32).
+	[{_, {_, [_, _, _, _, _, _, _], Result}}] = [httpc:request(post, {"https://api.mojang.com/profiles/page/1", [], "application/json", "{\"name\":\""++Name++"\",\"agent\":\"minecraft\"}"}, [{ssl, [{verify, 0}]}], [])],
+	string:substr(Result, 21, 32).
 u2n(Uuid) -> % UUID to Username
 	application:start(inets),
 	application:start(crypto),
 	application:start(asn1),
 	application:start(public_key),
 	application:start(ssl),
-	[{_, {_, [_, _, _, _, _, _, _], RES}}] = [httpc:request(get, {"https://sessionserver.mojang.com/session/minecraft/profile/"++Uuid, []}, [{ssl, [{verify, 0}]}], [])],
-	string:sub_word(string:substr(RES, 50, 16), 1, $\").
+	[{_, {_, [_, _, _, _, _, _, _], Result}}] = [httpc:request(get, {"https://sessionserver.mojang.com/session/minecraft/profile/"++Uuid, []}, [{ssl, [{verify, 0}]}], [])],
+	string:sub_word(string:substr(Result, 50, 16), 1, $\").
 uf(Tbsuuid) -> % Format UUID
 	CountHyphen = string:words(Tbsuuid, $-)-1,
 	if CountHyphen<1 ->
