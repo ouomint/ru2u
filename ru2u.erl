@@ -1,8 +1,19 @@
 %% coding: utf-8
 % ru2u, Resolver U2U (Username / UUID) by tHEMtZ
 -module(ru2u).
--export([n2u/1, u2n/1, uf/1]).
+-export([rh/1, sh/1, uf/1, n2u/1, u2n/1]).
 
+rh(UuidWithHyphen) -> % Remove Hyphen
+	string:join(string:tokens(UuidWithHyphen, "-"), "").
+sh(UuidWithoutHyphen) -> % Separate with Hyphen
+	string:substr(UuidWithoutHyphen, 1, 8)++"-"++string:substr(UuidWithoutHyphen, 9, 4)++"-"++string:substr(UuidWithoutHyphen, 13, 4)++"-"++string:substr(UuidWithoutHyphen, 17, 4)++"-"++string:substr(UuidWithoutHyphen, 21).
+uf(TbsUuid) -> % Format UUID
+	CountHyphen = string:words(TbsUuid, $-),
+	if CountHyphen<2 ->
+		sh(TbsUuid);
+	true ->
+		rh(TbsUuid)
+	end.
 n2u(Name) -> % Username to UUID
 	application:start(inets),
 	application:start(crypto),
@@ -19,10 +30,3 @@ u2n(Uuid) -> % UUID to Username
 	application:start(ssl),
 	[{_, {_, [_, _, _, _, _, _, _], Result}}] = [httpc:request(get, {"https://sessionserver.mojang.com/session/minecraft/profile/"++string:join(string:tokens(Uuid, "-"), ""), []}, [{ssl, [{verify, 0}]}], [])],
 	string:sub_word(string:substr(Result, 50, 16), 1, $\").
-uf(Tbsuuid) -> % Format UUID
-	CountHyphen = string:words(Tbsuuid, $-),
-	if CountHyphen<2 ->
-		string:substr(Tbsuuid, 1, 8)++"-"++string:substr(Tbsuuid, 9, 4)++"-"++string:substr(Tbsuuid, 13, 4)++"-"++string:substr(Tbsuuid, 17, 4)++"-"++string:substr(Tbsuuid, 21);
-	true ->
-		string:join(string:tokens(Tbsuuid, "-"), "")
-	end.
