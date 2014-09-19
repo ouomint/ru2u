@@ -6,7 +6,12 @@
 rh(UuidWithHyphen) -> % Remove Hyphen
 	string:join(string:tokens(UuidWithHyphen, "-"), "").
 sh(UuidWithoutHyphen) -> % Separate with Hyphen
-	string:substr(UuidWithoutHyphen, 1, 8)++"-"++string:substr(UuidWithoutHyphen, 9, 4)++"-"++string:substr(UuidWithoutHyphen, 13, 4)++"-"++string:substr(UuidWithoutHyphen, 17, 4)++"-"++string:substr(UuidWithoutHyphen, 21).
+	CountHyphen = string:words(UuidWithoutHyphen, $-),
+	if CountHyphen<2 ->
+		string:substr(UuidWithoutHyphen, 1, 8)++"-"++string:substr(UuidWithoutHyphen, 9, 4)++"-"++string:substr(UuidWithoutHyphen, 13, 4)++"-"++string:substr(UuidWithoutHyphen, 17, 4)++"-"++string:substr(UuidWithoutHyphen, 21);
+	true ->
+		UuidWithoutHyphen
+	end.
 uf(TbsUuid) -> % Format UUID
 	CountHyphen = string:words(TbsUuid, $-),
 	if CountHyphen<2 ->
