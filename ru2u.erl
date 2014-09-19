@@ -33,5 +33,5 @@ u2n(Uuid) -> % UUID to Username
 	application:start(asn1),
 	application:start(public_key),
 	application:start(ssl),
-	[{_, {_, [_, _, _, _, _, _, _], Result}}] = [httpc:request(get, {"https://sessionserver.mojang.com/session/minecraft/profile/"++string:join(string:tokens(Uuid, "-"), ""), []}, [{ssl, [{verify, 0}]}], [])],
+	[{_, {_, [_, _, _, _, _, _, _], Result}}] = [httpc:request(get, {"https://sessionserver.mojang.com/session/minecraft/profile/"++rh(Uuid), []}, [{ssl, [{verify, 0}]}], [])],
 	string:sub_word(string:substr(Result, 50, 16), 1, $\").
