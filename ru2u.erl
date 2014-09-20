@@ -34,4 +34,9 @@ u2n(Uuid) -> % UUID to Username
 	application:start(public_key),
 	application:start(ssl),
 	[{_, {_, [_, _, _, _, _, _, _], Result}}] = [httpc:request(get, {"https://sessionserver.mojang.com/session/minecraft/profile/"++rh(Uuid), []}, [{ssl, [{verify, 0}]}], [])],
-	string:sub_word(string:substr(Result, 50, 16), 1, $\").
+	Return = string:sub_word(string:substr(Result, 50, 16), 1, $\"),
+	if Return == ":" ->
+		{fail, Uuid};
+	true ->
+		Return
+	end.
